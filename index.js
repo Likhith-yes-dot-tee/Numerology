@@ -46,9 +46,9 @@ app.post('/submit', (req, res) => {
     // var cd = recursive(c+d)
     // var number = ab.toString().concat(cd.toString())
     // console.log(number,ab,cd,date);
-    converter.docxEdit(data).then(()=>converter.docx2Pdf()).then(()=> converter.email(data)).then(()=>res.send('Process done!!')).catch((e)=>console.log('failed'+e))
+    converter.docxEdit(data).then(()=>res.send('Process done!!')).then(()=>converter.docx2Pdf()).then(()=> converter.email(data)).catch((e)=>console.log('failed'+e))
     
-   
+    
   })
 
 
