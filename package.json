@@ -19,6 +19,7 @@
     "express": "^4.17.1",
     "libreoffice-convert": "^1.3.2",
     "mailgun-js": "^0.22.0",
+    "path": "^0.12.7",
     "pizzip": "^3.0.6"
   }
 }

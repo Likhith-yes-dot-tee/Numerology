@@ -1,5 +1,6 @@
 const express = require('express')
 const app = express()
+const path = require('path')
 const converter = require('./app')
 const port = 3000
 var data
@@ -9,26 +10,10 @@ app.use(express.static('public'))
 app.use(express.urlencoded({extended: false}))
 
 
-// async function recursive(data) {
-//   result = [];
-//   data.forEach(k => {
-//       var va = k.split('');
-//       var val = +va[0] + +va[1];
-//       if (val > 9) {
-//           var v = val.toString().split('');
-//           var res = +v[0] + +v[1];
-//           result.push(res + '');
-//       } else {
-//           result.push(val + '');
-//       }
-//   });
-//   return await result;
-// }
 
 
 app.get('/', (req, res) => {
-  res.render('index.html')
-  
+  res.render('success.html')
 })
 
 
@@ -46,13 +31,17 @@ app.post('/submit', (req, res) => {
     // var cd = recursive(c+d)
     // var number = ab.toString().concat(cd.toString())
     // console.log(number,ab,cd,date);
-    converter.docxEdit(data).then(()=>res.send('Process done!!')).then(()=>converter.docx2Pdf()).then(()=> converter.email(data)).catch((e)=>console.log('failed'+e))
+    converter.docxEdit(data)
+    .then(()=>res.render('success.html'))
+    .then(()=>converter.docx2Pdf())
+    .then(()=> converter.email(data))
+    .catch((e)=>console.log('failed'+e))
     
     
   })
 
 
-app.listen(process.env.PORT||port, () => {
+app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`)
 })
 
