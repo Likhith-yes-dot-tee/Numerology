@@ -118,10 +118,7 @@ exports.docx2Pdf = function (data) {
 exports.flipBook = function (data) {
     return new Promise((resolve,reject)=>{
         fetch(`https://heyzine.com/api1?pdf=https://numerology-wpgk9.ondigitalocean.app/${data.name}_${uID}.pdf%3Fv2&k=8d79f1ce06caa035`)
-    .then(res => res.json())
-    .then(json => {     
-    resolve(json.url);
-    })
+    .then(res => resolve(res))
     .catch((err)=>{
         reject(err)
     })
