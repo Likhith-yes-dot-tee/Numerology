@@ -1,7 +1,7 @@
 
 var PizZip = require('pizzip');
 var Docxtemplater = require('docxtemplater');
-// const fetch = require('node-fetch');
+const fetch = require('node-fetch');
 const date = require('date-and-time');
 const ordinal = require('date-and-time/plugin/ordinal');
 require('dotenv').config()
@@ -115,22 +115,22 @@ exports.docx2Pdf = function (data) {
     })
 }
 
-// exports.flipBook = function () {
-//     return new Promise((resolve,reject){
-//         fetch("https://heyzine.com/api1?pdf=http://3.0.89.198/outputfile.pdf%3Fv2&k=8d79f1ce06caa035")
-//     .then(res => res.json())
-//     .then(json => {     
-//     resolve(json.url);
-//     })
-//     .catch((err)=>{
-//         reject(err)
-//     })
+exports.flipBook = function (data) {
+    return new Promise((resolve,reject)=>{
+        fetch(`https://heyzine.com/api1?pdf=https://numerology-wpgk9.ondigitalocean.app/${data.name}_${uID}.pdf%3Fv2&k=8d79f1ce06caa035`)
+    .then(res => res.json())
+    .then(json => {     
+    resolve(json.url);
+    })
+    .catch((err)=>{
+        reject(err)
+    })
 
-//     })
+    })
     
-// }
+}
 
-exports.email = function (data) {
+exports.email = function (data,res) {
 
     return new Promise((resolve,reject)=>{
         var api_key = process.env.MAILGUN_API;
@@ -141,8 +141,8 @@ var mailOptions = {
   from: 'tolikhith@gmail.com',
   to: data.email,
   subject: 'Hello',
-  text: 'Testing some Mailgun awesomeness!',
-  attachment:__dirname+`/CustomerReports/${data.name}_${uID}.pdf`,
+  text: res,
+//   attachment:__dirname+`/CustomerReports/${data.name}_${uID}.pdf`,
 };
  
 mailgun.messages().send(mailOptions, function (error, body) {
