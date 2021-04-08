@@ -7,6 +7,7 @@ var data
 
 
 app.use(express.static('public'))
+app.use(express.static('CustomerReports'))
 app.use(express.urlencoded({extended: false}))
 app.set('views', 'views')
 app.set('view engine', 'ejs')
