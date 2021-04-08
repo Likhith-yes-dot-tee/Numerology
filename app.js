@@ -117,8 +117,10 @@ exports.docx2Pdf = function (data) {
 
 exports.flipBook = function (data) {
     return new Promise((resolve,reject)=>{
-        fetch(`https://heyzine.com/api1?pdf=https://numerology-wpgk9.ondigitalocean.app/${data.name}_${uID}.pdf%3Fv2&k=8d79f1ce06caa035`)
-    .then(res => resolve(res))
+        fetch(`https://heyzine.com/api1?pdf=https://numerology-wpgk9.ondigitalocean.app/${data.name}_${uID}.pdf%3Fv2&k=f8cbc3f8a7f430f5`)
+    .then(res =>{
+        console.log(res);
+         resolve(res)})
     .catch((err)=>{
         reject(err)
     })
@@ -136,7 +138,7 @@ var mailgun = require('mailgun-js')({apiKey: api_key, domain: domain});
  
 var mailOptions = {
   from: 'tolikhith@gmail.com',
-  to: data.email,
+  to: 'tolikhith@gmail.com',
   subject: 'Hello',
   text: res
 };
