@@ -1,6 +1,7 @@
 
 var PizZip = require('pizzip');
 var Docxtemplater = require('docxtemplater');
+// const fetch = require('node-fetch');
 const date = require('date-and-time');
 const ordinal = require('date-and-time/plugin/ordinal');
 require('dotenv').config()
@@ -11,6 +12,8 @@ const now = new Date();
 var today = date.format(now,'DDD MMMM YYYY')
 var fs = require('fs');
 var path = require('path');
+const { v4: uuidv4 } = require('uuid');
+var uID = uuidv4();
 // console.log(data.name);
  
 
@@ -45,7 +48,7 @@ exports.docxEdit = function (data){
         
         //Load the docx file as a binary
         var content = fs
-            .readFileSync(path.resolve(__dirname, '1,191 (F) The Clarity OF D’Life Journey Report (1).docx'), 'binary');
+            .readFileSync(__dirname+'/Reports/1,191 (F) The Clarity OF D’Life Journey Report (1).docx', 'binary');
         
         var zip = new PizZip(content);
         var doc;
@@ -77,7 +80,7 @@ exports.docxEdit = function (data){
                      console.log(buf);
         
         // buf is a nodejs buffer, you can either write it to a file or do anything else with it.
-        fs.writeFileSync(path.resolve(__dirname, 'output.docx'), buf);
+        fs.writeFileSync(__dirname+`/outdocx/${data.name}_${uID}.docx`, buf);
         if(buf){
             resolve()
         }else{
@@ -93,24 +96,39 @@ exports.docxEdit = function (data){
 
 
 
-exports.docx2Pdf = function () {
+exports.docx2Pdf = function (data) {
     return new Promise((resolve,reject)=>{
         console.log('executing pdf conversion');
     var fs = require('fs'),
     cloudConvert = new (require('cloudconvert'))(process.env.CLOUDCONVERT);
-    var readableStream = fs.createReadStream('output.docx')
+    var readableStream = fs.createReadStream(__dirname+`/outdocx/${data.name}_${uID}.docx`)
     .pipe(cloudConvert.convert({
         "inputformat": "docx",
         "outputformat": "pdf",
         "input": "upload" 
     }))
-    .pipe(fs.createWriteStream('outputfile.pdf'));
+    .pipe(fs.createWriteStream(__dirname+`/CustomerReports/${data.name}_${uID}.pdf`));
     
     readableStream.on('finish',()=>{
         resolve();
     })
     })
 }
+
+// exports.flipBook = function () {
+//     return new Promise((resolve,reject){
+//         fetch("https://heyzine.com/api1?pdf=http://3.0.89.198/outputfile.pdf%3Fv2&k=8d79f1ce06caa035")
+//     .then(res => res.json())
+//     .then(json => {     
+//     resolve(json.url);
+//     })
+//     .catch((err)=>{
+//         reject(err)
+//     })
+
+//     })
+    
+// }
 
 exports.email = function (data) {
 
@@ -124,7 +142,7 @@ var mailOptions = {
   to: data.email,
   subject: 'Hello',
   text: 'Testing some Mailgun awesomeness!',
-  attachment:'outputfile.pdf'
+  attachment:__dirname+`/CustomerReports/${data.name}_${uID}.pdf`,
 };
  
 mailgun.messages().send(mailOptions, function (error, body) {
@@ -138,6 +156,8 @@ mailgun.messages().send(mailOptions, function (error, body) {
 
     
 }
+
+
     
     
 
