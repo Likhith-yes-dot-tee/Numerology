@@ -120,7 +120,7 @@ exports.flipBook = function (data) {
         fetch(`https://heyzine.com/api1?pdf=https://numerology-wpgk9.ondigitalocean.app/${data.name}_${uID}.pdf%3Fv2&k=f8cbc3f8a7f430f5`)
     .then(res =>{
         console.log(res);
-         resolve(res)})
+         resolve(res.url)})
     .catch((err)=>{
         reject(err)
     })
@@ -140,7 +140,7 @@ var mailOptions = {
   from: 'tolikhith@gmail.com',
   to: 'tolikhith@gmail.com',
   subject: 'Hello',
-  text: res
+  text: `${res}`
 };
  
 mailgun.messages().send(mailOptions, function (error, body) {
