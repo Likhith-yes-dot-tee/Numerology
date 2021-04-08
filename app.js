@@ -138,8 +138,7 @@ var mailOptions = {
   from: 'tolikhith@gmail.com',
   to: data.email,
   subject: 'Hello',
-  text: res,
-//   attachment:__dirname+`/CustomerReports/${data.name}_${uID}.pdf`,
+  text: res
 };
  
 mailgun.messages().send(mailOptions, function (error, body) {
