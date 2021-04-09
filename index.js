@@ -22,20 +22,13 @@ app.get('/', (req, res) => {
 app.post('/submit', (req, res) => {
     
     data = req.body
-
     converter.docxEdit(data)
     .then(()=>res.render('success.ejs'))
     .then(()=>converter.docx2Pdf(data))
     .then(()=>converter.flipBook(data))
     .then((res)=> converter.email(data,res))
-    .catch((e)=>console.log('failed'+e))
-    
-    
+    .catch((e)=>console.log('failed '+e)) 
   })
 
 
-app.listen(process.env.PORT||port, () => {
-  console.log(`Example app listening at http://localhost:${port}`)
-})
-
-module.exports = {'data':data}
+  module.exports = app

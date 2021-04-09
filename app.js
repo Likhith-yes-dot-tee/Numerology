@@ -3,7 +3,9 @@ var PizZip = require('pizzip');
 var Docxtemplater = require('docxtemplater');
 const fetch = require('node-fetch');
 const date = require('date-and-time');
+const calculator = require('./numberCalc')
 const ordinal = require('date-and-time/plugin/ordinal');
+const Customers = require('./initialSetup').db().collection('Customer Data')
 require('dotenv').config()
 
 date.plugin(ordinal);
@@ -45,7 +47,10 @@ exports.docxEdit = function (data){
             }
             throw error;
         }
-        
+        // 
+        var list = calculator.spliter(data.dob)
+        var finalList = calculator.calcNumbers(list)
+        console.log(finalList);
         //Load the docx file as a binary
         var content = fs
             .readFileSync(__dirname+'/Reports/1,191 (F) The Clarity OF D’Life Journey Report (1).docx', 'binary');
@@ -116,10 +121,10 @@ exports.docx2Pdf = function (data) {
 }
 
 exports.flipBook = function (data) {
-    return new Promise((resolve,reject)=>{
+    return new Promise(async (resolve,reject)=>{
         fetch(`https://heyzine.com/api1?pdf=https://numerology-wpgk9.ondigitalocean.app/${data.name}_${uID}.pdf%3Fv2&k=f8cbc3f8a7f430f5`)
     .then(res =>{
-        console.log(res);
+        Customers.insertOne({'data':data,'link':res})
          resolve(res.url)})
     .catch((err)=>{
         reject(err)
@@ -138,7 +143,7 @@ var mailgun = require('mailgun-js')({apiKey: api_key, domain: domain});
  
 var mailOptions = {
   from: 'tolikhith@gmail.com',
-  to: 'tolikhith@gmail.com',
+  to: data.email,
   subject: 'Hello',
   text: `${res}`
 };
