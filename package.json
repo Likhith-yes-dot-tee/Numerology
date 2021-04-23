@@ -8,7 +8,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
-  "author": "",
+  "author": "Likhith S T",
   "license": "ISC",
   "dependencies": {
     "cloudconvert": "^1.1.2",
