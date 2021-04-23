@@ -15,14 +15,14 @@ var today = date.format(now,'DDD MMMM YYYY')
 var fs = require('fs');
 var path = require('path');
 const { v4: uuidv4 } = require('uuid');
-
+var uID
 // console.log(data.name);
  
 
 
 // The error object contains additional information when logged with JSON.stringify (it contains a properties object containing all suberrors).
 exports.docxEdit = function (data){
-    var uID = uuidv4();
+    uID = uuidv4();
     return new Promise((resolve,reject)=>{
         function replaceErrors(key, value) {
             if (value instanceof Error) {
