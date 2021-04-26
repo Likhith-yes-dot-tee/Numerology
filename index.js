@@ -24,9 +24,9 @@ app.post('/submit', (req, res) => {
     data = req.body
     converter.docxEdit(data)
     .then(()=>res.render('success.ejs'))
-    .then(()=>converter.docx2Pdf(data))
-    .then(()=>converter.flipBook(data))
-    .then((res)=> converter.email(data,res))
+    // .then(()=>converter.docx2Pdf(data))
+    // .then(()=>converter.flipBook(data))
+    // .then((res)=> converter.email(data,res))
     .catch((e)=>console.log('failed '+e)) 
   })
 

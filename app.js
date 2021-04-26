@@ -64,10 +64,12 @@ exports.docxEdit = function (data){
             errorHandler(error);
         }
         
+        console.log(typeof(uID));
         //set the templateVariables
         doc.setData({
             first_name:data.name,
-            day:today
+            day:today,
+            uID:uID.substring(0,8)
         });
         
         try {
@@ -124,7 +126,7 @@ exports.flipBook = function (data) {
     return new Promise(async (resolve,reject)=>{
         fetch(`https://heyzine.com/api1?pdf=https://numerology-wpgk9.ondigitalocean.app/${data.name}_${uID}.pdf%3Fv2&k=${process.env.HEYZINE}`)
     .then(res =>{
-        Customers.insertOne({'data':data,'link':res})
+        Customers.insertOne({'userData':data,'reportLink':res.url})
          resolve(res.url)})
     .catch((err)=>{
         reject(err)
