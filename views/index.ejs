@@ -48,10 +48,10 @@
         </form>
     </div>
       <% if(err.length==1){%>
-        <p><%= err[0] %></p>
+        <p style="color: red;"><%= err[0] %></p>
       <% }else{%>
       <% err.forEach(function(e){%>
-          <p><%= e %></p>
+          <p style="color: red;"><%= e %></p>
       <%})%>
       <%} %>
 
