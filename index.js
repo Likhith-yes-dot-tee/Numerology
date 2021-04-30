@@ -16,14 +16,14 @@ app.set('views', 'views')
 app.set('view engine', 'ejs')
 app.engine('html', require('ejs').renderFile);
 
-app.set('trust proxy', 1) // trust first proxy
+// app.set('trust proxy', 1) // trust first proxy
 app.use(session({
   secret: 'keyboard cat',
   resave: true,
   saveUninitialized: true,
-  cookie: {maxAge:60000,httpOnly:true }
+  cookie: {maxAge:60000*10,httpOnly:true }
 }))
-  app.use(flash());
+app.use(flash());
 
 
 var userIdentifier = function (req,res,next) {
@@ -31,21 +31,19 @@ var userIdentifier = function (req,res,next) {
   .then((data)=>{
     userData = data
     return new Promise((resolve,reject)=>{
-      if (userData!==null &&userData.password === req.body.password) {
+      if (userData!==null && userData.password === req.body.password) {
         req.session.user = {email:userData.email,_id:userData._id}
         resolve()
       } else {
-        reject("Email or Password Incorrect")
+        req.flash('errors','Email or Password Incorrect')
+        reject()
       }
     })
   })
   .then(()=>next())
   .catch((err)=>{
     // console.log(err);
-    req.flash('errors',`${err}`)
-    req.session.save(function () {
       res.redirect('/login')
-    })
   })
   
 }
@@ -55,7 +53,7 @@ var mustBeLoggedIn = function (req,res,next) {
   if (req.session.user) {
     next()
 } else {
-    req.flash("errors","You must be logged in to perform this action")
+    // req.flash('errors','You must be logged in to perform this action')
     req.session.save(function () {
         res.redirect('/')
     })
@@ -67,9 +65,9 @@ app.get('/',function (req,res) {
 })
 
 app.get('/login',function (req,res) {
-  var error = req.flash('error')
-  console.log(error);
-  res.render('login.ejs',{err:typeof(error)==='undefined'?'':error})
+  var error = req.flash('errors')
+  console.log(error[0]);
+  res.render('login.ejs',{err:typeof(error[0])=='undefined'?'':error[0]})
 })
 
 app.post('/user-authentication',userIdentifier,function (req,res) {
@@ -77,22 +75,30 @@ app.post('/user-authentication',userIdentifier,function (req,res) {
 })
 
 app.get('/report-generator',mustBeLoggedIn,function (req,res) {
-  res.render('index.ejs')
+  var error = req.flash('reportError')
+  console.log(error);
+  res.render('index.ejs',{err:error.length==0?['']:error})
 })
 
 
 app.post('/submit',mustBeLoggedIn, (req, res) => {
   console.log(userData);
-  if (userData.transactionId==req.body.transactionId&&userData.reportsLeft>0) {
+  if (userData.transactionId == req.body.transactionId && userData.reportsLeft > 0) {
     var data = req.body
     converter.docxEdit(data)
     .then(()=>res.render('success.ejs'))
-    // .then(()=>converter.docx2Pdf(data))
-    // .then(()=>converter.flipBook(data))
-    // .then((res)=> converter.email(data,res))
+    .then(()=>converter.docx2Pdf(data))
+    .then(()=>converter.flipBook(data))
+    .then((res)=> converter.email(data,res))
     .then(()=>users.findOneAndUpdate({'email':userData.email},{$set:{'reportsGenerated':userData.reportsGenerated+1,'reportsLeft':userData.reportsLeft-1}}))
     .catch((e)=>console.log('failed '+e))
   } else {
+    if (userData.transactionId != req.body.transactionId) {
+      req.flash('reportError','Wrong transaction ID')
+    }
+    else{
+      req.flash('reportError',`ReportsLeft ${userData.reportsLeft}`)
+    }
     res.redirect('/report-generator')
   }
    

@@ -47,7 +47,14 @@
             <button type="submit" class="btn btn-primary w-100" style="background-color: #FF8C00 !important; border: orange !important;">Submit Now!</button>
         </form>
     </div>
-      
+      <% if(err.length==1){%>
+        <p><%= err[0] %></p>
+      <% }else{%>
+      <% err.forEach(function(e){%>
+          <p><%= e %></p>
+      <%})%>
+      <%} %>
+
       <script>
       // Example starter JavaScript for disabling form submissions if there are invalid fields
       (function() {
