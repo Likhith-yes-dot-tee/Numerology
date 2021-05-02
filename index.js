@@ -9,6 +9,7 @@ const flash = require('connect-flash')
 // var data
 
 var userData = {}
+var updatedUserData = {}
 app.use(express.static('public'))
 app.use(express.static('CustomerReports'))
 app.use(express.urlencoded({extended: false}))
@@ -83,6 +84,22 @@ app.get('/report-generator',mustBeLoggedIn,function (req,res) {
 
 app.post('/submit',mustBeLoggedIn, (req, res) => {
   console.log(userData);
+  users.findOne({'email':userData.email})
+  .then((data)=>{
+    return new Promise((resolve,reject)=>{
+      if (data) {
+        updatedUserData = data;
+        resolve() ;  
+      } else {
+        reject('While looking for updated user')
+      }
+    })
+  })
+  .catch((err)=>{
+    console.log(err);
+  })
+
+  
   if (userData.transactionId == req.body.transactionId && userData.reportsLeft > 0) {
     var data = req.body
     converter.docxEdit(data)
@@ -90,7 +107,7 @@ app.post('/submit',mustBeLoggedIn, (req, res) => {
     .then(()=>converter.docx2Pdf(data))
     .then(()=>converter.flipBook(data))
     .then((res)=> converter.email(data,res))
-    .then(()=>users.findOneAndUpdate({'email':userData.email},{$set:{'reportsGenerated':userData.reportsGenerated+1,'reportsLeft':userData.reportsLeft-1}}))
+    .then(()=>users.findOneAndUpdate({'email':userData.email},{$set:{'reportsGenerated':updatedUserData.reportsGenerated+1,'reportsLeft':updatedUserData.reportsLeft-1}}))
     .catch((e)=>console.log('failed '+e))
   } else {
     if (userData.transactionId != req.body.transactionId) {
