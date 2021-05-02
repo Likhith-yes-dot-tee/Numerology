@@ -12,6 +12,8 @@
   </head>
   <body class="mx-auto" style="width: 60%; margin-top:2%;">
     
+    <%- include('includes/header') %>
+
     <div class="container">
       
 
@@ -47,13 +49,7 @@
             <button type="submit" class="btn btn-primary w-100" style="background-color: #FF8C00 !important; border: orange !important;">Submit Now!</button>
         </form>
     </div>
-      <% if(err.length==1){%>
         <p style="color: red;"><%= err[0] %></p>
-      <% }else{%>
-      <% err.forEach(function(e){%>
-          <p style="color: red;"><%= e %></p>
-      <%})%>
-      <%} %>
 
       <script>
       // Example starter JavaScript for disabling form submissions if there are invalid fields
