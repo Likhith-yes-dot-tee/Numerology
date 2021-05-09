@@ -107,7 +107,7 @@ app.post('/submit',mustBeLoggedIn, (req, res) => {
   if (userData.transactionId == req.body.transactionId && userData.reportsLeft > 0) {
     var data = req.body
     converter.docxEdit(data)
-    .then(()=>res.render('success.ejs'))
+    .then(()=>res.render('success.ejs'),{reportsLeft:userData.reportsLeft,reportsGenerated:userData.reportsGenerated})
     .then(()=>converter.docx2Pdf(data))
     .then(()=>converter.flipBook(data))
     .then((res)=> converter.email(data,res))
