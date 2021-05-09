@@ -3,7 +3,8 @@ if(1){
    let a=20;
     console.log(a);
     {
-        console.log(a);
+        var lk = false
+       console.log(lk);
     }
 }
 

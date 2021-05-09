@@ -19,7 +19,9 @@
           </div>
           <h5>This might take a while...</h5>
         </div>
-
+        <div id="show" style="visibility: hidden;">
+          <a href="/report-generator"></a><button type="button"  class="btn btn-outline-primary">Primary</button>
+        </div>
 
      
         
@@ -28,6 +30,7 @@
       <script>
   setTimeout(function(){
     document.getElementById("hide").style.visibility = "hidden";
+    document.getElementById("show").style.visibility = "inline-block";
         }, 3000);
       </script>
 </body>
