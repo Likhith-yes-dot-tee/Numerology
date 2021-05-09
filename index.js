@@ -91,7 +91,7 @@ app.post('/submit',mustBeLoggedIn, (req, res) => {
   var userData = {}
   users.findOne({'email':req.session.email})
   .then((data)=>{
-    userData = data;
+    userData = data
   })
   .catch((err)=>{
     console.log(err);
