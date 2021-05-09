@@ -76,7 +76,9 @@ app.post('/user-authentication',userIdentifier,function (req,res) {
 })
 
 app.get('/report-generator',mustBeLoggedIn,function (req,res) {
-  users.findOne({'email':req.body.email}).then((data)=>userData = data)
+  users.findOne({'email':req.body.email}).then((data)=>userData = data).catch((err)=>{
+    console.log(err);
+  })
   var error = req.flash('reportError')
   console.log(error);
   res.render('index.ejs',{err:error.length==0?['']:error,
@@ -86,7 +88,7 @@ app.get('/report-generator',mustBeLoggedIn,function (req,res) {
 
 
 app.post('/submit',mustBeLoggedIn, (req, res) => {
-  
+  var userData = {}
   users.findOne({'email':req.session.email})
   .then((data)=>{
     userData = data;
