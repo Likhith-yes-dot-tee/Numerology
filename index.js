@@ -76,7 +76,7 @@ app.post('/user-authentication',userIdentifier,function (req,res) {
 })
 
 app.get('/report-generator',mustBeLoggedIn,function (req,res) {
-
+  users.findOne({'email':req.body.email}).then((data)=>userData = data)
   var error = req.flash('reportError')
   console.log(error);
   res.render('index.ejs',{err:error.length==0?['']:error,
@@ -86,32 +86,24 @@ app.get('/report-generator',mustBeLoggedIn,function (req,res) {
 
 
 app.post('/submit',mustBeLoggedIn, (req, res) => {
-  console.log(userData);
+  
   users.findOne({'email':userData.email})
   .then((data)=>{
-    return new Promise((resolve,reject)=>{
-      if (data) {
-        // updating userData
-        userData = data;
-        resolve() ;  
-      } else {
-        reject('While looking for updated user')
-      }
-    })
+    userData = data;
   })
   .catch((err)=>{
     console.log(err);
   })
 
-  
+  console.log(userData);
   if (userData.transactionId == req.body.transactionId && userData.reportsLeft > 0) {
     var data = req.body
     converter.docxEdit(data)
-    .then(()=>res.render('success.ejs'),{reportsLeft:userData.reportsLeft,reportsGenerated:userData.reportsGenerated})
+    .then(()=>users.findOneAndUpdate({'email':userData.email},{$set:{'reportsGenerated':userData.reportsGenerated+1,'reportsLeft':userData.reportsLeft-1}}))
+    .then(()=>res.render('success.ejs'),{reportsLeft:`${userData.reportsLeft-1}`,reportsGenerated:`${userData.reportsGenerated+1}`})
     .then(()=>converter.docx2Pdf(data))
     .then(()=>converter.flipBook(data))
     .then((res)=> converter.email(data,res))
-    .then(()=>users.findOneAndUpdate({'email':userData.email},{$set:{'reportsGenerated':userData.reportsGenerated+1,'reportsLeft':userData.reportsLeft-1}}))
     .catch((e)=>console.log('failed '+e))
   } else {
     if (userData.transactionId != req.body.transactionId) {
