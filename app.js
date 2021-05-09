@@ -124,7 +124,7 @@ exports.docx2Pdf = function (data) {
 
 exports.flipBook = function (data) {
     return new Promise(async (resolve,reject)=>{
-        fetch(`https://heyzine.com/api1?pdf=https://numerology-wpgk9.ondigitalocean.app/${data.name}_${uID}.pdf%3Fv2&k=${process.env.HEYZINE}`)
+        fetch(`https://heyzine.com/api1?pdf=http://numerology-wpgk9.ondigitalocean.app/${data.name}_${uID}.pdf%3Fv2&k=${process.env.HEYZINE}`)
     .then(res =>{
         Customers.insertOne({'userData':data,'reportLink':res.url})
          resolve(res.url)})

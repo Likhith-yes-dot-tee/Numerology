@@ -76,33 +76,36 @@ app.post('/user-authentication',userIdentifier,function (req,res) {
 })
 
 app.get('/report-generator',mustBeLoggedIn,function (req,res) {
-  users.findOne({'email':req.body.email}).then((data)=>userData = data).catch((err)=>{
-    console.log(err);
-  })
-  var error = req.flash('reportError')
+  console.log("email: "+ req.session.user.email);
+  users.findOne({'email':req.session.user.email})
+  .then((data)=>{
+    var userData = data
+    var error = req.flash('reportError')
   console.log(error);
+    console.log(userData);
   res.render('index.ejs',{err:error.length==0?['']:error,
                           reportsLeft:userData.reportsLeft,
                           reportsGenerated:userData.reportsGenerated})
 })
+.catch((err)=>{
+    console.log(err)
+  })
+})
+  
 
 
 app.post('/submit',mustBeLoggedIn, (req, res) => {
   var userData = {}
-  users.findOne({'email':req.session.email})
+  users.findOne({'email':req.session.user.email})
   .then((data)=>{
-    userData = data
-  })
-  .catch((err)=>{
-    console.log(err);
-  })
-
-  console.log(userData);
+    var userData = data;
+    console.log(userData);
   if (userData.transactionId == req.body.transactionId && userData.reportsLeft > 0) {
     var data = req.body
     converter.docxEdit(data)
     .then(()=>users.findOneAndUpdate({'email':userData.email},{$set:{'reportsGenerated':userData.reportsGenerated+1,'reportsLeft':userData.reportsLeft-1}}))
-    .then(()=>res.render('success.ejs'),{reportsLeft:`${userData.reportsLeft-1}`,reportsGenerated:`${userData.reportsGenerated+1}`})
+    .then(()=>res.render('success.ejs',{reportsLeft:`${userData.reportsLeft-1}`,reportsGenerated:`${userData.reportsGenerated+1}`}))
+    .then(()=>{req.session.destroy()})
     .then(()=>converter.docx2Pdf(data))
     .then(()=>converter.flipBook(data))
     .then((res)=> converter.email(data,res))
@@ -116,15 +119,10 @@ app.post('/submit',mustBeLoggedIn, (req, res) => {
     }
     res.redirect('/report-generator')
   }
-   
   })
-
-
-  app.get('/logout',function (req,res) {
-    req.session.destroy()
-    // redirecting to /report-generator instead of /login to make sure session destruction
-    res.redirect('/report-generator')
+  .catch((err)=>{
+    console.log(err);
   })
-
+  })
 
   module.exports = app
