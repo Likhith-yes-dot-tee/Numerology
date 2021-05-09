@@ -87,7 +87,7 @@ app.get('/report-generator',mustBeLoggedIn,function (req,res) {
 
 app.post('/submit',mustBeLoggedIn, (req, res) => {
   
-  users.findOne({'email':userData.email})
+  users.findOne({'email':req.session.email})
   .then((data)=>{
     userData = data;
   })
