@@ -104,8 +104,7 @@ app.post('/submit',mustBeLoggedIn, (req, res) => {
     var data = req.body
     converter.docxEdit(data)
     .then(()=>users.findOneAndUpdate({'email':userData.email},{$set:{'reportsGenerated':userData.reportsGenerated+1,'reportsLeft':userData.reportsLeft-1}}))
-    .then(()=>res.render('success.ejs',{reportsLeft:`${userData.reportsLeft-1}`,reportsGenerated:`${userData.reportsGenerated+1}`}))
-    .then(()=>{req.session.destroy()})
+    .then(()=>res.redirect('/success'))
     .then(()=>converter.docx2Pdf(data))
     .then(()=>converter.flipBook(data))
     .then((res)=> converter.email(data,res))
@@ -125,4 +124,13 @@ app.post('/submit',mustBeLoggedIn, (req, res) => {
   })
   })
 
+  app.get('/success',function (req,res) {
+    users.findOne({'email':req.session.user.email})
+    .then((data)=>{res.render('success.ejs',{reportsLeft:data.reportsLeft,reportsGenerated:data.reportsGenerated})})
+  })
+
+  app.get('/logout',function (req,res) {
+    req.session.destroy()
+    res.redirect('/report-generator')   
+  })
   module.exports = app
